@@ -31,6 +31,7 @@ public class LoanApplicationHandler {
                     var domain = mapper.toDomain(dto);
                     return createLoanApplicationUseCase.createLoanApplication(domain, dto.loanType());
                 })
+                .map(mapper::toResponse)
                 .flatMap(response
                         -> ServerResponse.created(URI.create("/api/v1/solicitud/"))
                         .bodyValue(response))
@@ -38,4 +39,6 @@ public class LoanApplicationHandler {
                         ex instanceof BaseException ? ex : new UnexpectedException(ex)
                 ));
     }
+
+    public void createLoanApplicationDoc(CreateLoanApplicationDTO dto) {}
 }

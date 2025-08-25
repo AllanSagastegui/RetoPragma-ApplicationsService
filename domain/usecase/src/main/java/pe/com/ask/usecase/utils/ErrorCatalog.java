@@ -44,7 +44,7 @@ public enum ErrorCatalog {
             "APPLICATIONS_LOAN_AMOUNT_OUT_OF_RANGE",
             "Loan Amount Out of Range",
             "The requested loan amount is not within the allowed range for the selected loan type.",
-            400,
+            422,
             Map.of(
                     "amount", "The loan amount must be between the minimum and maximum allowed for this loan type."
             )

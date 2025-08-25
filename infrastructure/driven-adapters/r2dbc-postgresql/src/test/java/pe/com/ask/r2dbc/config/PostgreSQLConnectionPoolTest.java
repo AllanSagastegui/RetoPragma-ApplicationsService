@@ -24,10 +24,10 @@ class PostgreSQLConnectionPoolTest {
 
         when(properties.host()).thenReturn("localhost");
         when(properties.port()).thenReturn(5432);
-        when(properties.database()).thenReturn("dbName");
-        when(properties.schema()).thenReturn("schema");
-        when(properties.username()).thenReturn("username");
-        when(properties.password()).thenReturn("password");
+        when(properties.database()).thenReturn("loan_application_pragma");
+        when(properties.schema()).thenReturn("public");
+        when(properties.username()).thenReturn("theask");
+        when(properties.password()).thenReturn("elAllan!!12345");
     }
 
     @Test

@@ -1,30 +1,34 @@
 package pe.com.ask.api.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
+@Schema(name = "CreateLoanApplicationDTO", description = "Data required to create a new loan application")
 public record CreateLoanApplicationDTO(
-        UUID idLoanApplication,
-
         @NotNull(message = "Amount cannot be null")
         @DecimalMin(value= "0.0", inclusive = true, message = "Amount cannot be less than 0")
         @DecimalMax(value = "15000000.0", inclusive = true, message = "Amount cannot exceed 15,000,000")
+        @Schema(description = "Requested loan amount", example = "50000.00")
         BigDecimal amount,
 
         @NotNull(message = "Term cannot be null")
         @Min(value = 0, message = "Term cannot be less than 0")
+        @Schema(description = "Loan term in months", example = "12")
         int term,
 
         @NotBlank(message = "Email cannot be blank")
         @Email(message = "A valid email address is required")
+        @Schema(description = "Email of the applicant", example = "allan.sagastegui@test.com")
         String email,
 
         @NotBlank(message = "DNI cannot be blank")
         @Pattern(regexp = "\\d{8}", message = "DNI must contain exactly 8 digits")
+        @Schema(description = "National ID (DNI) of the applicant", example = "12345678")
         String dni,
 
         @NotBlank(message = "Loan Type cannot be blank")
+        @Schema(description = "Type of the loan", example = "Préstamo Personal")
         String loanType
 ) { }
