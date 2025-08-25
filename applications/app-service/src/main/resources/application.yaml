@@ -1,14 +1,37 @@
-##Spring Configuration
 server:
-  port: 8080
+  port: 8090
 spring:
   application:
-    name: Applications-Service
+    name: "Applications-Service"
   devtools:
     add-properties: false
   h2:
     console:
       enabled: true
-      path: /h2
+      path: "/h2"
   profiles:
-    include:
+    include: null
+logging:
+  level:
+    pe.com.ask: trace
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+routes:
+  path:
+adapters:
+  r2dbc:
+    host: "localhost"
+    port: 5432
+    database: "loan_application_pragma"
+    schema: "public"
+    username: "theask"
+    password: "elAllan!!12345"
