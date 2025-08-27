@@ -1,4 +1,4 @@
-package pe.com.ask.usecase.utils;
+package pe.com.ask.usecase.utils.errors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

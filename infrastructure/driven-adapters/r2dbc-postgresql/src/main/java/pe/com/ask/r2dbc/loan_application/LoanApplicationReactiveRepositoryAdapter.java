@@ -1,4 +1,4 @@
-package pe.com.ask.r2dbc.loan_aplication;
+package pe.com.ask.r2dbc.loan_application;
 
 import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.model.loanapplication.gateways.LoanApplicationRepository;

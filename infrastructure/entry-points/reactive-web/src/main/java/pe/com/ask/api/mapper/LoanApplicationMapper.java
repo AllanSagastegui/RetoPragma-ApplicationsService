@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import pe.com.ask.api.dto.request.CreateLoanApplicationDTO;
 import pe.com.ask.api.dto.response.ResponseCreateLoanApplication;
 import pe.com.ask.model.loanapplication.LoanApplication;
-import pe.com.ask.model.loanapplication.dto.LoanApplicationDTO;
+import pe.com.ask.model.loanapplication.data.LoanApplicationData;
 
 @Mapper(componentModel = "spring")
 public interface LoanApplicationMapper {
@@ -20,7 +20,7 @@ public interface LoanApplicationMapper {
         );
     }
 
-    default ResponseCreateLoanApplication toResponse(LoanApplicationDTO loanApplication)  {
+    default ResponseCreateLoanApplication toResponse(LoanApplicationData loanApplication)  {
         if (loanApplication == null) return null;
         return new ResponseCreateLoanApplication(
                 loanApplication.getIdLoanApplication(),

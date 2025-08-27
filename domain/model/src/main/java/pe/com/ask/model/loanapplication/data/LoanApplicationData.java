@@ -1,4 +1,4 @@
-package pe.com.ask.model.loanapplication.dto;
+package pe.com.ask.model.loanapplication.data;
 
 import lombok.Builder;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class LoanApplicationDTO {
+public class LoanApplicationData {
     private UUID idLoanApplication;
     private BigDecimal amount;
     private int term;

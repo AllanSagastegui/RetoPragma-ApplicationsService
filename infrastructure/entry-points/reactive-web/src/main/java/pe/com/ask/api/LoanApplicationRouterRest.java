@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import pe.com.ask.api.dto.request.CreateLoanApplicationDTO;
 import pe.com.ask.api.dto.response.ResponseCreateLoanApplication;
 import pe.com.ask.api.exception.GlobalExceptionFilter;
+import pe.com.ask.api.utils.routes.Routes;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -68,7 +69,7 @@ public class LoanApplicationRouterRest {
             )
     })
     public RouterFunction<ServerResponse> routerFunction(LoanApplicationHandler loanApplicationHandler, GlobalExceptionFilter filter) {
-        return route(POST("/api/v1/solicitud"), loanApplicationHandler::listenPOSTCreateLoanApplicationUseCase)
+        return route(POST(Routes.CREATE_LOAN_APPLICATION), loanApplicationHandler::listenPOSTCreateLoanApplicationUseCase)
                 .filter(filter);
     }
 }

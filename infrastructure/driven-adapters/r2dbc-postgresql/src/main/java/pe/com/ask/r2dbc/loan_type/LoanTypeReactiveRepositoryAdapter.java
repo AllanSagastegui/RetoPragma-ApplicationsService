@@ -28,6 +28,7 @@ public class LoanTypeReactiveRepositoryAdapter extends ReactiveAdapterOperations
 
     @Override
     public Mono<LoanType> findByName(String name) {
-        return super.repository.findByName(name);
+        return super.repository.findByName(name)
+                .map(entity -> mapper.map(entity, LoanType.class));
     }
 }

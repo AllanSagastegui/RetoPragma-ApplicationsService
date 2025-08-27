@@ -1,7 +1,7 @@
 package pe.com.ask.api.exception.model;
 
 import pe.com.ask.usecase.exception.BaseException;
-import pe.com.ask.usecase.utils.ErrorCatalog;
+import pe.com.ask.usecase.utils.errors.ErrorCatalog;
 
 public class UnexpectedException extends BaseException {
     public UnexpectedException(Throwable cause) {

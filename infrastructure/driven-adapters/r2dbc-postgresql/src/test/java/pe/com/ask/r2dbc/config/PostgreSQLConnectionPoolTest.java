@@ -1,5 +1,6 @@
 package pe.com.ask.r2dbc.config;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,17 +18,23 @@ class PostgreSQLConnectionPoolTest {
     @Mock
     private PostgresqlConnectionProperties properties;
 
+    private AutoCloseable mocks;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
 
         when(properties.host()).thenReturn("localhost");
         when(properties.port()).thenReturn(5432);
-        when(properties.database()).thenReturn("loan_application_pragma");
-        when(properties.schema()).thenReturn("public");
-        when(properties.username()).thenReturn("theask");
-        when(properties.password()).thenReturn("elAllan!!12345");
+        when(properties.database()).thenReturn("dbName");
+        when(properties.schema()).thenReturn("schema");
+        when(properties.username()).thenReturn("username");
+        when(properties.password()).thenReturn("password");
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
     }
 
     @Test

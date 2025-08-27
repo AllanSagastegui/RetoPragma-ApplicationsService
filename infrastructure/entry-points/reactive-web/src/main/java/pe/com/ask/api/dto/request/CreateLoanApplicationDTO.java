@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 @Schema(name = "CreateLoanApplicationDTO", description = "Data required to create a new loan application")
 public record CreateLoanApplicationDTO(
         @NotNull(message = "Amount cannot be null")
-        @DecimalMin(value= "0.0", inclusive = true, message = "Amount cannot be less than 0")
-        @DecimalMax(value = "15000000.0", inclusive = true, message = "Amount cannot exceed 15,000,000")
         @Schema(description = "Requested loan amount", example = "50000.00")
         BigDecimal amount,
 
