@@ -17,8 +17,8 @@ import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
 import pe.com.ask.model.status.Status;
 import pe.com.ask.model.status.gateways.StatusRepository;
 import pe.com.ask.usecase.exception.LoanAmountOutOfRangeException;
-import pe.com.ask.usecase.exception.LoanTypeNotFound;
-import pe.com.ask.usecase.exception.StatusNotFound;
+import pe.com.ask.usecase.exception.LoanTypeNotFoundException;
+import pe.com.ask.usecase.exception.StatusNotFoundException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -109,7 +109,7 @@ class CreateLoanApplicationUseCaseTest {
         Mono<LoanApplicationData> result = useCase.createLoanApplication(loanApplication, "InvalidType");
 
         StepVerifier.create(result)
-                .expectError(LoanTypeNotFound.class)
+                .expectError(LoanTypeNotFoundException.class)
                 .verify();
     }
 
@@ -139,7 +139,7 @@ class CreateLoanApplicationUseCaseTest {
         Mono<LoanApplicationData> result = useCase.createLoanApplication(loanApplication, "Personal Loan");
 
         StepVerifier.create(result)
-                .expectError(StatusNotFound.class)
+                .expectError(StatusNotFoundException.class)
                 .verify();
     }
 }

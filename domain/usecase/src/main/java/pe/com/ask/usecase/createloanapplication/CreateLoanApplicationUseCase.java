@@ -9,8 +9,8 @@ import pe.com.ask.model.loanapplication.gateways.LoanApplicationRepository;
 import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
 import pe.com.ask.model.status.gateways.StatusRepository;
 import pe.com.ask.usecase.exception.LoanAmountOutOfRangeException;
-import pe.com.ask.usecase.exception.LoanTypeNotFound;
-import pe.com.ask.usecase.exception.StatusNotFound;
+import pe.com.ask.usecase.exception.LoanTypeNotFoundException;
+import pe.com.ask.usecase.exception.StatusNotFoundException;
 import pe.com.ask.usecase.utils.STATUS_DEFAULT;
 import pe.com.ask.usecase.utils.logmessages.LoanApplicationLog;
 import reactor.core.publisher.Mono;
@@ -32,7 +32,7 @@ public class CreateLoanApplicationUseCase {
                         .doOnNext(type -> logger.trace(LoanApplicationLog.LOAN_TYPE_FOUND, type.getName()))
                         .switchIfEmpty(Mono.defer(() -> {
                             logger.trace(LoanApplicationLog.LOAN_TYPE_NOT_FOUND, loanTypeName);
-                            return Mono.error(new LoanTypeNotFound());
+                            return Mono.error(new LoanTypeNotFoundException());
                         }))
                         .flatMap(type -> {
                             boolean validAmount = loanApplication.getAmount().compareTo(type.getMinimumAmount()) >= 0 &&
@@ -49,7 +49,7 @@ public class CreateLoanApplicationUseCase {
                                     .switchIfEmpty(Mono.defer(() -> {
                                         logger.trace(LoanApplicationLog.STATUS_NOT_FOUND,
                                                 STATUS_DEFAULT.PENDING_REVIEW.getName());
-                                        return Mono.error(new StatusNotFound());
+                                        return Mono.error(new StatusNotFoundException());
                                     }))
                                     .flatMap(status -> {
                                         loanApplication.setIdStatus(status.getIdStatus());

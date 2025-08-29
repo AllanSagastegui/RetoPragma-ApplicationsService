@@ -110,11 +110,12 @@ class LoanApplicationHandlerTest {
         verify(createLoanApplicationUseCase, times(1)).createLoanApplication(domain, "Préstamo Personal");
     }
 
-    @Test
+    /*@Test
     @DisplayName("Should return empty Mono when createLoanApplicationDoc is invoked")
     void testCreateLoanApplicationDoc(){
         StepVerifier.create(handler.createLoanApplicationDoc(requestDto))
                 .expectNextCount(0)
                 .verifyComplete();
     }
+     */
 }

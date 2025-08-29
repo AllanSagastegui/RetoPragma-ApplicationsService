@@ -52,10 +52,4 @@ public class LoanApplicationHandler {
                     );
                 });
     }
-
-    public Mono<ResponseCreateLoanApplication> createLoanApplicationDoc(
-            @RequestBody(description = "Loan Application - Data required to create a new loan application")
-            CreateLoanApplicationDTO dto) {
-        return Mono.empty();
-    }
 }
