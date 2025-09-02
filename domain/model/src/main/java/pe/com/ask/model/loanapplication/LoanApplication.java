@@ -22,4 +22,5 @@ public class LoanApplication {
 
     private UUID idStatus;
     private UUID idLoanType;
+    private UUID userId;
 }

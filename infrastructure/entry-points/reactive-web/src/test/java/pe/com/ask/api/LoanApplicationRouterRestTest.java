@@ -10,7 +10,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import pe.com.ask.api.dto.request.CreateLoanApplicationDTO;
 import pe.com.ask.api.dto.response.ResponseCreateLoanApplication;
-import pe.com.ask.api.exception.GlobalExceptionFilter;
 import pe.com.ask.api.exception.model.ValidationException;
 import pe.com.ask.api.exception.service.ValidationService;
 import pe.com.ask.api.mapper.LoanApplicationMapper;
@@ -29,8 +28,7 @@ import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {
         LoanApplicationRouterRest.class,
-        LoanApplicationHandler.class,
-        GlobalExceptionFilter.class
+        LoanApplicationHandler.class
 })
 @WebFluxTest
 class LoanApplicationRouterRestTest {
@@ -97,7 +95,7 @@ class LoanApplicationRouterRestTest {
 
         LoanApplicationHandler handler = new LoanApplicationHandler(loanApplicationMapper, validationService, customLogger, createLoanApplicationUseCase);
         webTestClient = WebTestClient.bindToRouterFunction(
-                new LoanApplicationRouterRest().routerFunction(handler, new GlobalExceptionFilter(customLogger))
+                new LoanApplicationRouterRest().routerFunction(handler)
         ).build();
     }
 

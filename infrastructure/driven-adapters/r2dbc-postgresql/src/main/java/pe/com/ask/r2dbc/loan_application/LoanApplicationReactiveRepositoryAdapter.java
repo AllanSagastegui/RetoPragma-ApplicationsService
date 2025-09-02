@@ -6,8 +6,10 @@ import pe.com.ask.r2dbc.entity.LoanApplicationEntity;
 import pe.com.ask.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -29,5 +31,17 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     @Override
     public Mono<LoanApplication> createLoanApplication(LoanApplication loanApplication) {
         return super.save(loanApplication);
+    }
+
+    @Override
+    public Flux<LoanApplication> findLoansByIdStatus(List<UUID> statusIds, int offset, int limit) {
+
+        return repository.findAllByIdStatusIn(statusIds, offset, limit)
+                .map(entity -> mapper.map(entity, LoanApplication.class));
+    }
+
+    @Override
+    public Mono<Long> countLoansByIdStatus(List<UUID> statusIds) {
+        return repository.countByIdStatusIn(statusIds);
     }
 }

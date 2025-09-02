@@ -1,8 +1,8 @@
 package pe.com.ask.api.exception.model;
 
 import lombok.Getter;
-import pe.com.ask.usecase.exception.BaseException;
-import pe.com.ask.usecase.utils.errors.ErrorCatalog;
+import pe.com.ask.model.baseexception.BaseException;
+import pe.com.ask.model.baseexception.errors.ErrorCatalog;
 
 import java.util.Map;
 

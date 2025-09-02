@@ -1,4 +1,4 @@
-package pe.com.ask.usecase.utils.errors;
+package pe.com.ask.model.baseexception.errors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,6 +47,30 @@ public enum ErrorCatalog {
             422,
             Map.of(
                     "amount", "The loan amount must be between the minimum and maximum allowed for this loan type."
+            )
+    ),
+    UNAUTHORIZED(
+            "AUTH_UNAUTHORIZED",
+            "Unauthorized",
+            "You are not authenticated. Please log in to access this resource.",
+            401,
+            Map.of("user", "Authentication required")
+    ),
+
+    ACCESS_DENIED(
+            "AUTH_ACCESS_DENIED",
+            "Access Denied",
+            "You do not have permission to access this resource.",
+            403,
+            Map.of("user", "You lack the necessary permissions")
+    ),
+    DNI_MISMATCH(
+            "APPLICATIONS_DNI_MISMATCH",
+            "DNI Mismatch",
+            "The DNI in the request does not match the authenticated user's DNI.",
+            403,
+            Map.of(
+                    "dni", "The DNI provided does not belong to the authenticated user"
             )
     );
 

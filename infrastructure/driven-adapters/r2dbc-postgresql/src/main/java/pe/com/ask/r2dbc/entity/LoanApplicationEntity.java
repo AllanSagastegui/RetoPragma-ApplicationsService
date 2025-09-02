@@ -36,4 +36,7 @@ public class LoanApplicationEntity {
 
     @Column("id_loan_type")
     private UUID idLoanType;
+
+    @Column("id_user")
+    private UUID userId;
 }

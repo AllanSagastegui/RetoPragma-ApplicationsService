@@ -6,8 +6,10 @@ import pe.com.ask.model.status.Status;
 import pe.com.ask.model.status.gateways.StatusRepository;
 import pe.com.ask.r2dbc.entity.StatusEntity;
 import pe.com.ask.r2dbc.helper.ReactiveAdapterOperations;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -30,5 +32,10 @@ public class StatusReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<Status> findByName(String name) {
         return super.repository.findByName(name)
                 .map(entity ->mapper.map(entity, Status.class));
+    }
+
+    @Override
+    public Flux<UUID> findIdsByNames(List<String> statusNames) {
+        return this.repository.findByNameIn(statusNames).map(StatusEntity::getIdStatus);
     }
 }

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import pe.com.ask.api.doc.CreateLoanApplicationDoc;
-import pe.com.ask.api.exception.GlobalExceptionFilter;
 import pe.com.ask.api.utils.routes.Routes;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -26,8 +26,8 @@ public class LoanApplicationRouterRest {
                     beanMethod = "createLoanApplicationDoc"
             )
     })
-    public RouterFunction<ServerResponse> routerFunction(LoanApplicationHandler loanApplicationHandler, GlobalExceptionFilter filter) {
+    public RouterFunction<ServerResponse> routerFunction(LoanApplicationHandler loanApplicationHandler) {
         return route(POST(Routes.CREATE_LOAN_APPLICATION), loanApplicationHandler::listenPOSTCreateLoanApplicationUseCase)
-                .filter(filter);
+                .andRoute(GET(Routes.GET_LOANS_APPLICATIONS), loanApplicationHandler::listenGETAllLoanApplicationUnderReviewUseCase);
     }
 }

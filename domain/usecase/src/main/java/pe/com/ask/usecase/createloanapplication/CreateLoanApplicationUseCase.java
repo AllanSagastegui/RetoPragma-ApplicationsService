@@ -5,69 +5,64 @@ import pe.com.ask.model.gateways.CustomLogger;
 import pe.com.ask.model.gateways.TransactionalGateway;
 import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.model.loanapplication.data.LoanApplicationData;
-import pe.com.ask.model.loanapplication.gateways.LoanApplicationRepository;
-import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
-import pe.com.ask.model.status.gateways.StatusRepository;
-import pe.com.ask.usecase.exception.LoanAmountOutOfRangeException;
-import pe.com.ask.usecase.exception.LoanTypeNotFoundException;
-import pe.com.ask.usecase.exception.StatusNotFoundException;
-import pe.com.ask.usecase.utils.STATUS_DEFAULT;
-import pe.com.ask.usecase.utils.logmessages.LoanApplicationLog;
+import pe.com.ask.model.loanwithclient.gateways.UserIdentityGateway;
+import pe.com.ask.usecase.exception.UnauthorizedLoanApplicationException;
+import pe.com.ask.usecase.getdefaultstatus.GetDefaultStatusUseCase;
+import pe.com.ask.usecase.persistloanapplication.PersistLoanApplicationUseCase;
+import pe.com.ask.usecase.validateloanamount.ValidateLoanAmountUseCase;
+import pe.com.ask.usecase.validateloantype.ValidateLoanTypeUseCase;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class CreateLoanApplicationUseCase {
 
-    private final LoanApplicationRepository loanApplicationRepository;
-    private final LoanTypeRepository loanTypeRepository;
-    private final StatusRepository statusRepository;
+    private final ValidateLoanTypeUseCase validateLoanTypeUseCase;
+    private final ValidateLoanAmountUseCase validateLoanAmountUseCase;
+    private final GetDefaultStatusUseCase getDefaultStatusUseCase;
+    private final PersistLoanApplicationUseCase persistLoanApplicationUseCase;
     private final TransactionalGateway transactionalGateway;
+    private final UserIdentityGateway userIdentityGateway;
     private final CustomLogger logger;
 
     public Mono<LoanApplicationData> createLoanApplication(LoanApplication loanApplication, String loanTypeName) {
-        logger.trace(LoanApplicationLog.START_FLOW, loanApplication.getDni());
+        logger.trace("Start createLoanApplication flow", loanApplication.getDni());
 
-        return transactionalGateway.executeInTransaction(
-                loanTypeRepository.findByName(loanTypeName)
-                        .doOnNext(type -> logger.trace(LoanApplicationLog.LOAN_TYPE_FOUND, type.getName()))
-                        .switchIfEmpty(Mono.defer(() -> {
-                            logger.trace(LoanApplicationLog.LOAN_TYPE_NOT_FOUND, loanTypeName);
-                            return Mono.error(new LoanTypeNotFoundException());
-                        }))
-                        .flatMap(type -> {
-                            boolean validAmount = loanApplication.getAmount().compareTo(type.getMinimumAmount()) >= 0 &&
-                                    loanApplication.getAmount().compareTo(type.getMaximumAmount()) <= 0;
+        return userIdentityGateway.getCurrentUserDni()
+                .zipWith(userIdentityGateway.getCurrentUserId())
+                .flatMap(tuple -> {
+                    String dniFromToken = tuple.getT1();
+                    String userIdFromToken = tuple.getT2();
 
-                            if (!validAmount) {
-                                logger.trace(LoanApplicationLog.LOAN_AMOUNT_OUT_OF_RANGE,
-                                        loanApplication.getAmount(), type.getName());
-                                return Mono.error(new LoanAmountOutOfRangeException());
-                            }
+                    if (!loanApplication.getDni().equals(dniFromToken)) {
+                        logger.trace("DNI mismatch in CreateLoanApplicationUseCase",
+                                loanApplication.getDni(), dniFromToken);
+                        return Mono.error(new UnauthorizedLoanApplicationException());
+                    }
 
-                            loanApplication.setIdLoanType(type.getIdLoanType());
-                            return statusRepository.findByName(STATUS_DEFAULT.PENDING_REVIEW.getName())
-                                    .switchIfEmpty(Mono.defer(() -> {
-                                        logger.trace(LoanApplicationLog.STATUS_NOT_FOUND,
-                                                STATUS_DEFAULT.PENDING_REVIEW.getName());
-                                        return Mono.error(new StatusNotFoundException());
-                                    }))
-                                    .flatMap(status -> {
-                                        loanApplication.setIdStatus(status.getIdStatus());
-                                        return loanApplicationRepository.createLoanApplication(loanApplication)
-                                                .doOnSuccess(app -> logger.trace(LoanApplicationLog.LOAN_APPLICATION_CREATED,
-                                                        app.getIdLoanApplication()))
-                                                .map(app -> LoanApplicationData.builder()
-                                                        .idLoanApplication(app.getIdLoanApplication())
-                                                        .amount(app.getAmount())
-                                                        .term(app.getTerm())
-                                                        .email(app.getEmail())
-                                                        .dni(app.getDni())
-                                                        .status(status.getName())
-                                                        .loanType(type.getName())
-                                                        .build());
-                                    });
-                        })
-        ).doOnError(err -> logger.trace(LoanApplicationLog.ERROR_OCCURRED,
-                loanApplication.getDni(), err.getMessage()));
+                    loanApplication.setUserId(UUID.fromString(userIdFromToken));
+
+                    return transactionalGateway.executeInTransaction(
+                            validateLoanTypeUseCase.execute(loanTypeName)
+                                    .flatMap(type -> validateLoanAmountUseCase.execute(loanApplication, type)
+                                            .flatMap(validLoan -> getDefaultStatusUseCase.execute()
+                                                    .flatMap(status -> {
+                                                        validLoan.setIdStatus(status.getIdStatus());
+                                                        return persistLoanApplicationUseCase.execute(validLoan)
+                                                                .map(app -> LoanApplicationData.builder()
+                                                                        .idLoanApplication(app.getIdLoanApplication())
+                                                                        .amount(app.getAmount())
+                                                                        .term(app.getTerm())
+                                                                        .email(app.getEmail())
+                                                                        .dni(app.getDni())
+                                                                        .status(status.getName())
+                                                                        .loanType(type.getName())
+                                                                        .build());
+                                                    })))
+                    );
+                })
+                .doOnError(err -> logger.trace("Error in CreateLoanApplicationUseCase",
+                        loanApplication.getDni(), err.getMessage()));
     }
 }

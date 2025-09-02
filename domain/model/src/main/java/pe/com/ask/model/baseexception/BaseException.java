@@ -1,4 +1,4 @@
-package pe.com.ask.usecase.exception;
+package pe.com.ask.model.baseexception;
 
 import lombok.Getter;
 

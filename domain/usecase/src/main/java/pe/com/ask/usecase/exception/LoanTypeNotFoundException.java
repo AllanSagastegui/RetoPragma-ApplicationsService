@@ -1,6 +1,7 @@
 package pe.com.ask.usecase.exception;
 
-import pe.com.ask.usecase.utils.errors.ErrorCatalog;
+import pe.com.ask.model.baseexception.BaseException;
+import pe.com.ask.model.baseexception.errors.ErrorCatalog;
 
 public class LoanTypeNotFoundException extends BaseException {
     public LoanTypeNotFoundException() {
