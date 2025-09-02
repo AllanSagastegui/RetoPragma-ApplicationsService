@@ -12,4 +12,5 @@ public interface StatusRepository {
     Mono<Status> findByName(String name);
     Flux<UUID> findIdsByNames(List<String> statusNames);
     Flux<Status> findAll();
+    Flux<Status> findByNameContaining(String namePart);
 }

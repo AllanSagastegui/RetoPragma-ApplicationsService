@@ -13,10 +13,16 @@ import pe.com.ask.model.loanwithclient.gateways.UserIdentityGateway;
 import pe.com.ask.model.status.gateways.StatusRepository;
 import pe.com.ask.usecase.createloanapplication.CreateLoanApplicationUseCase;
 import pe.com.ask.usecase.getallloanapplicationunderreview.GetAllLoanApplicationUnderReviewUseCase;
-import pe.com.ask.usecase.getdefaultstatus.GetDefaultStatusUseCase;
-import pe.com.ask.usecase.persistloanapplication.PersistLoanApplicationUseCase;
-import pe.com.ask.usecase.validateloanamount.ValidateLoanAmountUseCase;
-import pe.com.ask.usecase.validateloantype.ValidateLoanTypeUseCase;
+import pe.com.ask.usecase.createloanapplication.getdefaultstatus.GetDefaultStatusUseCase;
+import pe.com.ask.usecase.createloanapplication.persistloanapplication.PersistLoanApplicationUseCase;
+import pe.com.ask.usecase.createloanapplication.validateloanamount.ValidateLoanAmountUseCase;
+import pe.com.ask.usecase.createloanapplication.validateloantype.ValidateLoanTypeUseCase;
+import pe.com.ask.usecase.getallloanapplicationunderreview.getallloantypes.GetAllLoanTypesUseCase;
+import pe.com.ask.usecase.getallloanapplicationunderreview.getallstatusprocess.GetAllStatusProcessUseCase;
+import pe.com.ask.usecase.getallloanapplicationunderreview.getclientsbyids.GetClientsByIdsUseCase;
+import pe.com.ask.usecase.getallloanapplicationunderreview.getloansandtotal.GetLoansAndTotalUseCase;
+import pe.com.ask.usecase.getallloanapplicationunderreview.getstatusids.GetStatusIdsUseCase;
+import pe.com.ask.usecase.getallloanapplicationunderreview.loanprocess.LoanProcessUseCase;
 
 @Configuration
 @ComponentScan(basePackages = "pe.com.ask.usecase",
@@ -36,7 +42,7 @@ public class UseCasesConfig {
 
     @Bean
     ValidateLoanAmountUseCase  validateLoanAmountUseCase(CustomLogger logger){
-        return new  ValidateLoanAmountUseCase(logger);
+        return new ValidateLoanAmountUseCase(logger);
     }
 
     @Bean
@@ -77,18 +83,86 @@ public class UseCasesConfig {
     }
 
     @Bean
-    GetAllLoanApplicationUnderReviewUseCase getAllLoanApplicationUnderReviewUseCase(
-            LoanApplicationRepository loanApplicationRepository,
+    GetStatusIdsUseCase  getStatusIdsUseCase(
             StatusRepository statusRepository,
-            LoanTypeRepository loanTypeRepository,
+            CustomLogger logger
+    ){
+        return new  GetStatusIdsUseCase(
+                statusRepository,
+                logger
+        );
+    }
+
+    @Bean
+    GetLoansAndTotalUseCase getLoansAndTotalUseCase(
+            LoanApplicationRepository loanApplicationRepository,
+            CustomLogger logger
+    ){
+        return new  GetLoansAndTotalUseCase(
+                loanApplicationRepository,
+                logger
+        );
+    }
+
+    @Bean
+    GetAllStatusProcessUseCase  getAllStatusProcessUseCase(
+            StatusRepository statusRepository,
+            CustomLogger logger
+    ){
+        return new GetAllStatusProcessUseCase(
+                statusRepository,
+                logger
+        );
+    }
+
+    @Bean
+    GetClientsByIdsUseCase  getClientsByIdsUseCase(
             ClientSnapshotRepository clientSnapshotRepository,
+            CustomLogger logger
+    ){
+        return new GetClientsByIdsUseCase(
+                clientSnapshotRepository,
+                logger
+        );
+    }
+
+    @Bean
+    GetAllLoanTypesUseCase  getAllLoanTypesUseCase(
+            LoanTypeRepository loanTypeRepository,
+            CustomLogger logger
+    ){
+        return new GetAllLoanTypesUseCase(
+                loanTypeRepository,
+                logger
+        );
+    }
+
+    @Bean
+    LoanProcessUseCase  loanProcessUseCase(
+            CustomLogger logger
+    ){
+        return new LoanProcessUseCase(
+                logger
+        );
+    }
+
+    @Bean
+    GetAllLoanApplicationUnderReviewUseCase getAllLoanApplicationUnderReviewUseCase(
+            GetStatusIdsUseCase getStatusIdsUseCase,
+            GetLoansAndTotalUseCase getLoansAndTotalUseCase,
+            GetAllStatusProcessUseCase getAllStatusProcessUseCase,
+            GetClientsByIdsUseCase getClientsByIdsUseCase,
+            GetAllLoanTypesUseCase getAllLoanTypesUseCase,
+            LoanProcessUseCase loanProcessUseCase,
             CustomLogger logger
     ) {
         return new  GetAllLoanApplicationUnderReviewUseCase(
-                loanApplicationRepository,
-                statusRepository,
-                loanTypeRepository,
-                clientSnapshotRepository,
+                getStatusIdsUseCase,
+                getLoansAndTotalUseCase,
+                getAllStatusProcessUseCase,
+                getClientsByIdsUseCase,
+                getAllLoanTypesUseCase,
+                loanProcessUseCase,
                 logger
         );
     }

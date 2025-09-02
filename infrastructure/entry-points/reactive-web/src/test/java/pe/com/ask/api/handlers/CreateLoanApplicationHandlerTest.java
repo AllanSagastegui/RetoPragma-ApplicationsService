@@ -1,4 +1,4 @@
-package pe.com.ask.api;
+package pe.com.ask.api.handlers;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,23 +23,21 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class LoanApplicationHandlerTest {
+class CreateLoanApplicationHandlerTest {
 
     @Mock private LoanApplicationMapper mapper;
     @Mock private ValidationService validator;
     @Mock private CreateLoanApplicationUseCase createLoanApplicationUseCase;
     @Mock private ServerRequest serverRequest;
-    @Mock private CustomLogger  customLogger;
+    @Mock private CustomLogger logger;
 
-    private LoanApplicationHandler handler;
+    private CreateLoanApplicationHandler handler;
+    private AutoCloseable mocks;
 
     private CreateLoanApplicationDTO requestDto;
     private LoanApplication domain;
-
-    private AutoCloseable mocks;
 
     @BeforeEach
     void setUp() {
@@ -61,7 +59,7 @@ class LoanApplicationHandlerTest {
                 .dni(requestDto.dni())
                 .build();
 
-        LoanApplicationData loanApplicationData = new LoanApplicationData(
+        LoanApplicationData domainData = new LoanApplicationData(
                 domain.getIdLoanApplication(),
                 domain.getAmount(),
                 domain.getTerm(),
@@ -72,23 +70,23 @@ class LoanApplicationHandlerTest {
         );
 
         ResponseCreateLoanApplication response = new ResponseCreateLoanApplication(
-                loanApplicationData.getIdLoanApplication(),
-                loanApplicationData.getAmount(),
-                loanApplicationData.getTerm(),
-                loanApplicationData.getEmail(),
-                loanApplicationData.getDni(),
-                loanApplicationData.getStatus(),
-                loanApplicationData.getLoanType()
+                domainData.getIdLoanApplication(),
+                domainData.getAmount(),
+                domainData.getTerm(),
+                domainData.getEmail(),
+                domainData.getDni(),
+                domainData.getStatus(),
+                domainData.getLoanType()
         );
 
         when(serverRequest.bodyToMono(CreateLoanApplicationDTO.class)).thenReturn(Mono.just(requestDto));
         when(validator.validate(any(CreateLoanApplicationDTO.class))).thenReturn(Mono.just(requestDto));
         when(mapper.toDomain(requestDto)).thenReturn(domain);
-        when(createLoanApplicationUseCase.createLoanApplication(any(LoanApplication.class), anyString()))
-                .thenReturn(Mono.just(loanApplicationData));
-        when(mapper.toResponse(loanApplicationData)).thenReturn(response);
+        when(createLoanApplicationUseCase.createLoanApplication(domain, requestDto.loanType()))
+                .thenReturn(Mono.just(domainData));
+        when(mapper.toResponse(domainData)).thenReturn(response);
 
-        handler = new LoanApplicationHandler(mapper, validator, customLogger, createLoanApplicationUseCase);
+        handler = new CreateLoanApplicationHandler(mapper, validator, logger, createLoanApplicationUseCase);
     }
 
     @AfterEach
@@ -97,7 +95,7 @@ class LoanApplicationHandlerTest {
     }
 
     @Test
-    @DisplayName("Should handle POST /solicitud and return ServerResponse with created LoanApplication")
+    @DisplayName("Should handle POST /loan and return ServerResponse with created LoanApplication")
     void testListenPOSTCreateLoanApplicationUseCase() {
         when(serverRequest.bodyToMono(CreateLoanApplicationDTO.class)).thenReturn(Mono.just(requestDto));
 
@@ -109,13 +107,4 @@ class LoanApplicationHandlerTest {
 
         verify(createLoanApplicationUseCase, times(1)).createLoanApplication(domain, "Préstamo Personal");
     }
-
-    /*@Test
-    @DisplayName("Should return empty Mono when createLoanApplicationDoc is invoked")
-    void testCreateLoanApplicationDoc(){
-        StepVerifier.create(handler.createLoanApplicationDoc(requestDto))
-                .expectNextCount(0)
-                .verifyComplete();
-    }
-     */
 }

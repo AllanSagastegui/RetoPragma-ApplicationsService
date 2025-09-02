@@ -7,10 +7,11 @@ import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.model.loanapplication.data.LoanApplicationData;
 import pe.com.ask.model.loanwithclient.gateways.UserIdentityGateway;
 import pe.com.ask.usecase.exception.UnauthorizedLoanApplicationException;
-import pe.com.ask.usecase.getdefaultstatus.GetDefaultStatusUseCase;
-import pe.com.ask.usecase.persistloanapplication.PersistLoanApplicationUseCase;
-import pe.com.ask.usecase.validateloanamount.ValidateLoanAmountUseCase;
-import pe.com.ask.usecase.validateloantype.ValidateLoanTypeUseCase;
+import pe.com.ask.usecase.createloanapplication.getdefaultstatus.GetDefaultStatusUseCase;
+import pe.com.ask.usecase.createloanapplication.persistloanapplication.PersistLoanApplicationUseCase;
+import pe.com.ask.usecase.createloanapplication.validateloanamount.ValidateLoanAmountUseCase;
+import pe.com.ask.usecase.createloanapplication.validateloantype.ValidateLoanTypeUseCase;
+import pe.com.ask.usecase.utils.logmessages.CreateLoanApplicationUseCaseLog;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class CreateLoanApplicationUseCase {
     private final CustomLogger logger;
 
     public Mono<LoanApplicationData> createLoanApplication(LoanApplication loanApplication, String loanTypeName) {
-        logger.trace("Start createLoanApplication flow", loanApplication.getDni());
+        logger.trace(CreateLoanApplicationUseCaseLog.START_FLOW, loanApplication.getDni());
 
         return userIdentityGateway.getCurrentUserDni()
                 .zipWith(userIdentityGateway.getCurrentUserId())
@@ -36,7 +37,7 @@ public class CreateLoanApplicationUseCase {
                     String userIdFromToken = tuple.getT2();
 
                     if (!loanApplication.getDni().equals(dniFromToken)) {
-                        logger.trace("DNI mismatch in CreateLoanApplicationUseCase",
+                        logger.trace(CreateLoanApplicationUseCaseLog.DNI_MISMATCH,
                                 loanApplication.getDni(), dniFromToken);
                         return Mono.error(new UnauthorizedLoanApplicationException());
                     }
@@ -62,7 +63,7 @@ public class CreateLoanApplicationUseCase {
                                                     })))
                     );
                 })
-                .doOnError(err -> logger.trace("Error in CreateLoanApplicationUseCase",
+                .doOnError(err -> logger.trace(CreateLoanApplicationUseCaseLog.ERROR_OCCURRED,
                         loanApplication.getDni(), err.getMessage()));
     }
 }

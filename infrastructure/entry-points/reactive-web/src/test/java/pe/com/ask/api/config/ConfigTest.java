@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -16,13 +18,27 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @ContextConfiguration(classes = {
         CorsConfig.class,
         SecurityHeadersConfig.class,
-        ConfigTest.TestRouter.class
+        ConfigTest.TestRouter.class,
+        ConfigTest.SecurityOverride.class
 })
 @WebFluxTest
 class ConfigTest {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    @Configuration
+    static class SecurityOverride {
+        @Bean
+        public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+            return http
+                    .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                    .authorizeExchange(auth -> auth
+                            .pathMatchers(
+                                    "/test"
+                            ).permitAll()).build();
+        }
+    }
 
     @Test
     void testGetShouldReturnOk() {
@@ -86,4 +102,6 @@ class ConfigTest {
                     .build();
         }
     }
+
+
 }

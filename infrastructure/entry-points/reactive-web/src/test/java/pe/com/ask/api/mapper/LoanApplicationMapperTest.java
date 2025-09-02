@@ -4,8 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pe.com.ask.api.dto.request.CreateLoanApplicationDTO;
 import pe.com.ask.api.dto.response.ResponseCreateLoanApplication;
+import pe.com.ask.api.dto.response.ResponseGetLoanApplicationUnderReview;
 import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.model.loanapplication.data.LoanApplicationData;
+import pe.com.ask.model.loanwithclient.ClientSnapshot;
+import pe.com.ask.model.loanwithclient.LoanWithClient;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -71,4 +74,53 @@ class LoanApplicationMapperTest {
         assertNull(mapper.toResponse(null));
     }
 
+    @Test
+    @DisplayName("Should map LoanWithClient to ResponseGetLoanApplicationUnderReview correctly")
+    void testToResponseGetLoanApplicationUnderReview() {
+        ClientSnapshot clientSnapshot = ClientSnapshot.builder().
+                id(UUID.randomUUID())
+                .name("Juan")
+                .lastName("Perez")
+                .dni("87654321")
+                .email("juan@test.com")
+                .baseSalary(new BigDecimal("5000"))
+                .build();
+        LoanApplicationData loanData = new LoanApplicationData(
+                null,
+                new BigDecimal("20000"),
+                36,
+                "juan@test.com",
+                "12345678",
+                "UNDER_REVIEW",
+                "Personal Loan"
+        );
+
+        LoanWithClient loanWithClient = new LoanWithClient(
+                loanData,
+                clientSnapshot,
+                new BigDecimal("5.5"),
+                new BigDecimal("1000"),
+                0
+        );
+
+        ResponseGetLoanApplicationUnderReview response = mapper.toResponseGetLoanApplicationUnderReview(loanWithClient);
+
+        assertNotNull(response);
+        assertEquals("Juan", response.name());
+        assertEquals("juan@test.com", response.email());
+        assertEquals(loanData.getAmount(), response.amount());
+        assertEquals(loanData.getTerm(), response.loanTerm());
+        assertEquals(clientSnapshot.getBaseSalary(), response.baseSalary());
+        assertEquals(loanData.getLoanType(), response.loanType());
+        assertEquals(loanData.getStatus(), response.loanStatus());
+        assertEquals(new BigDecimal("5.5"), response.interestRate());
+        assertEquals(new BigDecimal("1000"), response.totalMonthlyDebt());
+        assertNotNull(response.approvedLoans());
+    }
+
+    @Test
+    @DisplayName("Should return null when mapping null LoanWithClient")
+    void testToResponseGetLoanApplicationUnderReviewWithNull() {
+        assertNull(mapper.toResponseGetLoanApplicationUnderReview(null));
+    }
 }

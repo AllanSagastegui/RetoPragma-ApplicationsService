@@ -10,10 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.r2dbc.entity.LoanApplicationEntity;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
@@ -101,5 +103,29 @@ class LoanApplicationReactiveRepositoryAdapterTest {
         StepVerifier.create(repositoryAdapter.createLoanApplication(domain))
                 .expectErrorMessage("Entity is empty")
                 .verify();
+    }
+    @Test
+    @DisplayName("Should find loans by status successfully")
+    void testFindLoansByIdStatus() {
+        List<UUID> statusIds = List.of(domain.getIdStatus());
+        when(repository.findAllByIdStatusIn(statusIds, 0, 10)).thenReturn(Flux.just(entity));
+        when(mapper.map(entity, LoanApplication.class)).thenReturn(domain);
+
+        StepVerifier.create(repositoryAdapter.findLoansByIdStatus(statusIds, 0, 10))
+                .expectNextMatches(loan ->
+                        loan.getIdLoanApplication().equals(domain.getIdLoanApplication()) &&
+                                loan.getEmail().equals(domain.getEmail()))
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Should count loans by status successfully")
+    void testCountLoansByIdStatus() {
+        List<UUID> statusIds = List.of(domain.getIdStatus());
+        when(repository.countByIdStatusIn(statusIds)).thenReturn(Mono.just(5L));
+
+        StepVerifier.create(repositoryAdapter.countLoansByIdStatus(statusIds))
+                .expectNext(5L)
+                .verifyComplete();
     }
 }

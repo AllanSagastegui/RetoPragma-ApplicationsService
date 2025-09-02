@@ -38,4 +38,9 @@ public class StatusReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     public Flux<UUID> findIdsByNames(List<String> statusNames) {
         return this.repository.findByNameIn(statusNames).map(StatusEntity::getIdStatus);
     }
+
+    @Override
+    public Flux<Status> findByNameContaining(String namePart) {
+        return this.repository.findByNameContaining(namePart).map(entity ->mapper.map(entity, Status.class));
+    }
 }
