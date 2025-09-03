@@ -20,7 +20,7 @@ public class CreateLoanApplicationRouterRest {
     @Bean
     @RouterOperations({
             @RouterOperation(
-                    path = "/api/v1/solicitud",
+                    path = Routes.CREATE_LOAN_APPLICATION,
                     method = RequestMethod.POST,
                     beanClass = CreateLoanApplicationDoc.class,
                     beanMethod = "createLoanApplicationDoc"

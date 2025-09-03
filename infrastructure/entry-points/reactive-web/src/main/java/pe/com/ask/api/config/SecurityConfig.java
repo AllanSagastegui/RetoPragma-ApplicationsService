@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-// import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -18,7 +18,7 @@ import pe.com.ask.api.utils.routes.Routes;
 import reactor.core.publisher.Mono;
 
 @Configuration
-//@EnableReactiveMethodSecurity
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -30,6 +30,14 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
+                        .pathMatchers(
+                                Routes.SWAGGER_UI,
+                                Routes.SWAGGER_DOCS,
+                                Routes.SWAGGER_API_DOC,
+                                Routes.WEBJARS,
+                                Routes.TEST,
+                                Routes.ACTUATOR
+                        ).permitAll()
                         .pathMatchers(
                                 HttpMethod.POST,
                                 Routes.CREATE_LOAN_APPLICATION

@@ -25,6 +25,7 @@ public class UserContextFilter implements WebFilter {
                     }
                     return chain.filter(exchange)
                             .contextWrite(Context.of("userId ", userId));
-                });
+                })
+                .switchIfEmpty(chain.filter(exchange));
     }
 }

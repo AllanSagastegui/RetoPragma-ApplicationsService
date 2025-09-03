@@ -56,7 +56,6 @@ public enum ErrorCatalog {
             401,
             Map.of("user", "Authentication required")
     ),
-
     ACCESS_DENIED(
             "AUTH_ACCESS_DENIED",
             "Access Denied",
