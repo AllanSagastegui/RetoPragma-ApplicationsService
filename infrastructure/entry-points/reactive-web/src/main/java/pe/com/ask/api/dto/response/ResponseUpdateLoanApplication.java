@@ -1,13 +1,8 @@
 package pe.com.ask.api.dto.response;
 
-import lombok.Builder;
-
 import java.math.BigDecimal;
-import java.util.UUID;
 
-@Builder
-public record ResponseGetLoanApplicationUnderReview(
-        UUID loanId,
+public record ResponseUpdateLoanApplication(
         String name,
         String email,
         BigDecimal amount,
@@ -19,4 +14,4 @@ public record ResponseGetLoanApplicationUnderReview(
         BigDecimal interestRate,
         BigDecimal totalMonthlyDebt,
         Integer approvedLoans
-) { }
+) {}

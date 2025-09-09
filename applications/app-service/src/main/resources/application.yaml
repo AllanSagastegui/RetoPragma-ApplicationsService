@@ -37,16 +37,19 @@ routes:
   path: null
 adapters:
   r2dbc:
-    host: "localhost"
+    host: "postgres-db"
     port: 5432
-    database: "loan_application_pragma"
-    schema: "public"
+    database: "${DB_NAME}"
     username: "${DB_USER}"
     password: "${DB_PASSWORD}"
 adapter:
   restconsumer:
     timeout: 5000
-    url: "http://localhost:8080"
+    url: "http://authentication-service:8080"
+  sqs:
+    region: "${AWS_REGION}"
+    queueUrl: "${AWS_QUEUE_URL}"
+    endpoint: "http://localhost:4566"
 resilience4j:
   circuitbreaker:
     instances:

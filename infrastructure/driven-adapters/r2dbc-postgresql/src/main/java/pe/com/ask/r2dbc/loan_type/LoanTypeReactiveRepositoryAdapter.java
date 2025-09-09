@@ -2,6 +2,7 @@ package pe.com.ask.r2dbc.loan_type;
 
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.model.loantype.LoanType;
 import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
 import pe.com.ask.r2dbc.entity.LoanTypeEntity;
@@ -24,6 +25,11 @@ public class LoanTypeReactiveRepositoryAdapter extends ReactiveAdapterOperations
          *  Or using mapper.map with the class of the object model
          */
         super(repository, mapper, d -> mapper.map(d, LoanType.class/* change for domain model */));
+    }
+
+    @Override
+    public Mono<LoanType> findLoanTypeById(UUID id) {
+        return super.findById(id);
     }
 
     @Override

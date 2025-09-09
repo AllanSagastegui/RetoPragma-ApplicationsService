@@ -26,6 +26,24 @@ public enum ErrorCatalog {
                     "loanType", "The loan type you selected is invalid. Please select a valid loan type."
             )
     ),
+    LOAN_APPLICATION_NOT_FOUND(
+            "APPLICATIONS_LOAN_APPLICATION_NOT_FOUND",
+            "Loan Application Not Found",
+            "The requested loan application could not be found. Please check the ID and try again.",
+            404,
+            Map.of(
+                    "loanApplication", "The loan application ID you provided does not exist in the system."
+            )
+    ),
+    CLIENT_NOT_FOUND(
+            "APPLICATIONS_CLIENT_NOT_FOUND",
+            "Client Not Found",
+            "The client associated with this request could not be found.",
+            404,
+            Map.of(
+                    "client", "The client ID you provided does not exist in the system."
+            )
+    ),
     VALIDATION_EXCEPTION(
             "APPLICATIONS_VALIDATION_EXCEPTION",
             "Validation Failed",

@@ -46,6 +46,10 @@ public class SecurityConfig {
                                 HttpMethod.GET,
                                 Routes.GET_LOANS_APPLICATIONS
                         ).hasAnyRole("ADVISOR", "ADMIN")
+                        .pathMatchers(
+                                HttpMethod.PUT,
+                                Routes.UPDATE_LOAN_APPLICATION
+                        ).hasAnyRole("ADVISOR", "ADMIN")
                         .anyExchange()
                         .authenticated())
                 .exceptionHandling(ex -> ex

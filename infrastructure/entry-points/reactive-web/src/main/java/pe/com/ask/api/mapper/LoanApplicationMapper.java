@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import pe.com.ask.api.dto.request.CreateLoanApplicationDTO;
 import pe.com.ask.api.dto.response.ResponseCreateLoanApplication;
 import pe.com.ask.api.dto.response.ResponseGetLoanApplicationUnderReview;
+import pe.com.ask.api.dto.response.ResponseUpdateLoanApplication;
 import pe.com.ask.model.loanapplication.LoanApplication;
 import pe.com.ask.model.loanapplication.data.LoanApplicationData;
 import pe.com.ask.model.loanwithclient.LoanWithClient;
@@ -39,6 +40,23 @@ public interface LoanApplicationMapper {
     default ResponseGetLoanApplicationUnderReview toResponseGetLoanApplicationUnderReview(LoanWithClient loanWithClient) {
         if (loanWithClient == null) return null;
         return new ResponseGetLoanApplicationUnderReview(
+                loanWithClient.getLoanApplicationData().getIdLoanApplication(),
+                loanWithClient.getClientSnapshot().getName(),
+                loanWithClient.getClientSnapshot().getEmail(),
+                loanWithClient.getLoanApplicationData().getAmount(),
+                loanWithClient.getLoanApplicationData().getTerm(),
+                loanWithClient.getClientSnapshot().getBaseSalary(),
+                loanWithClient.getLoanApplicationData().getLoanType(),
+                loanWithClient.getLoanApplicationData().getStatus(),
+                loanWithClient.getInterestRate(),
+                loanWithClient.getTotalMonthlyDebt(),
+                loanWithClient.getApprovedLoans()
+        );
+    }
+
+    default ResponseUpdateLoanApplication toResponseUpdateLoanApplication(LoanWithClient loanWithClient) {
+        if (loanWithClient == null) return null;
+        return new ResponseUpdateLoanApplication(
                 loanWithClient.getClientSnapshot().getName(),
                 loanWithClient.getClientSnapshot().getEmail(),
                 loanWithClient.getLoanApplicationData().getAmount(),

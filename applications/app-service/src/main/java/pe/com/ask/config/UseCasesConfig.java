@@ -7,6 +7,7 @@ import org.springframework.context.annotation.FilterType;
 import pe.com.ask.model.gateways.CustomLogger;
 import pe.com.ask.model.gateways.TransactionalGateway;
 import pe.com.ask.model.loanapplication.gateways.LoanApplicationRepository;
+import pe.com.ask.model.loanapplication.gateways.LoanApplicationSQSGateway;
 import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
 import pe.com.ask.model.loanwithclient.gateways.ClientSnapshotRepository;
 import pe.com.ask.model.loanwithclient.gateways.UserIdentityGateway;
@@ -23,6 +24,11 @@ import pe.com.ask.usecase.getallloanapplicationunderreview.getclientsbyids.GetCl
 import pe.com.ask.usecase.getallloanapplicationunderreview.getloansandtotal.GetLoansAndTotalUseCase;
 import pe.com.ask.usecase.getallloanapplicationunderreview.getstatusids.GetStatusIdsUseCase;
 import pe.com.ask.usecase.getallloanapplicationunderreview.loanprocess.LoanProcessUseCase;
+import pe.com.ask.usecase.updateloanapplication.UpdateLoanApplicationUseCase;
+import pe.com.ask.usecase.updateloanapplication.buildloanwithclient.BuildLoanWithClientUseCase;
+import pe.com.ask.usecase.updateloanapplication.getclientandloantype.GetClientAndLoanTypeUseCase;
+import pe.com.ask.usecase.updateloanapplication.getstatus.GetStatusUseCase;
+import pe.com.ask.usecase.updateloanapplication.updateloan.UpdateLoanUseCase;
 
 @Configuration
 @ComponentScan(basePackages = "pe.com.ask.usecase",
@@ -31,6 +37,8 @@ import pe.com.ask.usecase.getallloanapplicationunderreview.loanprocess.LoanProce
         },
         useDefaultFilters = false)
 public class UseCasesConfig {
+
+    // CreateLoanApplicationUseCase
 
     @Bean
     ValidateLoanTypeUseCase  validateLoanTypeUseCase(
@@ -81,6 +89,9 @@ public class UseCasesConfig {
                 logger
         );
     }
+
+
+    // GetAllLoanApplicationUnderReviewUseCase
 
     @Bean
     GetStatusIdsUseCase  getStatusIdsUseCase(
@@ -165,5 +176,55 @@ public class UseCasesConfig {
                 loanProcessUseCase,
                 logger
         );
+    }
+
+    // UpdateLoanApplicationUseCase
+
+    @Bean
+    GetStatusUseCase  getStatusUseCase(
+            StatusRepository statusRepository,
+            CustomLogger logger
+    ){
+        return new  GetStatusUseCase(statusRepository, logger);
+    }
+
+    @Bean
+    UpdateLoanUseCase updateLoanUseCase(
+            LoanApplicationRepository loanApplicationRepository,
+            CustomLogger logger
+    ){
+        return new UpdateLoanUseCase(loanApplicationRepository, logger);
+    }
+
+    @Bean
+    GetClientAndLoanTypeUseCase  getClientAndLoanTypeUseCase(
+            ClientSnapshotRepository clientSnapshotRepository,
+            LoanTypeRepository loanTypeRepository,
+            CustomLogger logger
+    ){
+        return new GetClientAndLoanTypeUseCase(clientSnapshotRepository, loanTypeRepository, logger);
+    }
+
+    @Bean
+    BuildLoanWithClientUseCase buildLoanWithClientUseCase(){
+        return new BuildLoanWithClientUseCase();
+    }
+
+    @Bean
+    UpdateLoanApplicationUseCase updateLoanApplicationUseCase(
+            GetStatusUseCase getStatusUseCase,
+            UpdateLoanUseCase  updateLoanUseCase,
+            GetClientAndLoanTypeUseCase getClientAndLoanTypeUseCase,
+            BuildLoanWithClientUseCase buildLoanWithClientUseCase,
+            LoanApplicationSQSGateway loanApplicationSQSGateway,
+            CustomLogger logger
+    ){
+        return new UpdateLoanApplicationUseCase(
+                getStatusUseCase,
+                updateLoanUseCase,
+                getClientAndLoanTypeUseCase,
+                buildLoanWithClientUseCase,
+                loanApplicationSQSGateway,
+                logger);
     }
 }

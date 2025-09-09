@@ -34,6 +34,11 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     }
 
     @Override
+    public Mono<LoanApplication> updateLoanApplication(LoanApplication loanApplication) {
+        return super.save(loanApplication);
+    }
+
+    @Override
     public Flux<LoanApplication> findLoansByIdStatus(List<UUID> statusIds, int offset, int limit) {
 
         return repository.findAllByIdStatusIn(statusIds, offset, limit)
@@ -43,5 +48,10 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     @Override
     public Mono<Long> countLoansByIdStatus(List<UUID> statusIds) {
         return repository.countByIdStatusIn(statusIds);
+    }
+
+    @Override
+    public Mono<LoanApplication> findLoanApplicationById(UUID id) {
+        return super.findById(id);
     }
 }
