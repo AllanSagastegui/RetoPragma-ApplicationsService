@@ -4,6 +4,7 @@ public final class Routes {
 
     private Routes() {}
 
+    public static final String CALCULATE_CAPACITY = "/api/v1/calcular-capacidad/{idLoanApplication}";
     public static final String UPDATE_LOAN_APPLICATION = "/api/v1/solicitud/{idLoanApplication}";
     public static final String CREATE_LOAN_APPLICATION = "/api/v1/solicitud";
     public static final String GET_LOANS_APPLICATIONS = "/api/v1/solicitud";

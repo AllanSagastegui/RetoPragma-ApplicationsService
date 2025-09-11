@@ -2,10 +2,10 @@ package pe.com.ask.consumer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pe.com.ask.consumer.utils.routes.Routes;
+import pe.com.ask.consumer.utils.token.Token;
 import pe.com.ask.model.gateways.CustomLogger;
 import pe.com.ask.model.loanwithclient.ClientSnapshot;
 import pe.com.ask.model.loanwithclient.gateways.ClientSnapshotRepository;
@@ -23,22 +23,14 @@ public class RestConsumer implements ClientSnapshotRepository {
 
     @Override
     public Flux<ClientSnapshot> findClientsByIds(List<UUID> userIds) {
-        return ReactiveSecurityContextHolder.getContext()
-                .map(ctx -> {
-                    var auth = ctx.getAuthentication();
-                    if (auth.getCredentials() instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
-                        return jwt.getTokenValue();
-                    }
-                    return auth.getCredentials().toString();
-                })
-                .flatMapMany(token -> {
-                    return webClient
-                            .post()
-                            .uri(Routes.GET_CLIENTS_BY_IDS)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .bodyValue(userIds)
-                            .retrieve()
-                            .bodyToFlux(ClientSnapshot.class);
-                });
+        String token = Token.BEARER_TOKEN;
+        logger.trace("Using fixed token: {}", token);
+        return webClient
+                .post()
+                .uri(Routes.GET_CLIENTS_BY_IDS)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .bodyValue(userIds)
+                .retrieve()
+                .bodyToFlux(ClientSnapshot.class);
     }
 }

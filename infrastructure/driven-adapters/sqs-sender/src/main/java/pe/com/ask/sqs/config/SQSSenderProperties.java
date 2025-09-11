@@ -1,4 +1,4 @@
-package pe.com.ask.sqs.sender.config;
+package pe.com.ask.sqs.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -6,5 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record SQSSenderProperties(
      String region,
      String queueUrl,
-     String endpoint){
-}
+     String queueCalculateCapacity,
+     String queueResponseCalculateCapacity,
+     String endpoint
+){ }

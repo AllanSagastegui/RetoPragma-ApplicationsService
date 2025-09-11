@@ -6,12 +6,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import pe.com.ask.model.gateways.CustomLogger;
 import pe.com.ask.model.gateways.TransactionalGateway;
+import pe.com.ask.model.loanapplication.gateways.CalculateCapacitySQSGateway;
 import pe.com.ask.model.loanapplication.gateways.LoanApplicationRepository;
-import pe.com.ask.model.loanapplication.gateways.LoanApplicationSQSGateway;
+import pe.com.ask.model.loanapplication.gateways.PublishDecisionSQSGateway;
 import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
 import pe.com.ask.model.loanwithclient.gateways.ClientSnapshotRepository;
 import pe.com.ask.model.loanwithclient.gateways.UserIdentityGateway;
 import pe.com.ask.model.status.gateways.StatusRepository;
+import pe.com.ask.usecase.calculatecapacity.CalculateCapacityUseCase;
+import pe.com.ask.usecase.calculatecapacity.decisionpublisher.DecisionPublisherUseCase;
+import pe.com.ask.usecase.calculatecapacity.getclient.GetClientUseCase;
+import pe.com.ask.usecase.calculatecapacity.loantypevalidator.LoanTypeValidatorUseCase;
 import pe.com.ask.usecase.createloanapplication.CreateLoanApplicationUseCase;
 import pe.com.ask.usecase.getallloanapplicationunderreview.GetAllLoanApplicationUnderReviewUseCase;
 import pe.com.ask.usecase.createloanapplication.getdefaultstatus.GetDefaultStatusUseCase;
@@ -77,6 +82,7 @@ public class UseCasesConfig {
             PersistLoanApplicationUseCase persistLoanApplicationUseCase,
             TransactionalGateway transactionalGateway,
             UserIdentityGateway userIdentityGateway,
+            CalculateCapacityUseCase calculateCapacityUseCase,
             CustomLogger logger
     ) {
         return new CreateLoanApplicationUseCase(
@@ -86,6 +92,7 @@ public class UseCasesConfig {
                 persistLoanApplicationUseCase,
                 transactionalGateway,
                 userIdentityGateway,
+                calculateCapacityUseCase,
                 logger
         );
     }
@@ -216,7 +223,7 @@ public class UseCasesConfig {
             UpdateLoanUseCase  updateLoanUseCase,
             GetClientAndLoanTypeUseCase getClientAndLoanTypeUseCase,
             BuildLoanWithClientUseCase buildLoanWithClientUseCase,
-            LoanApplicationSQSGateway loanApplicationSQSGateway,
+            PublishDecisionSQSGateway publishDecisionSQSGateway,
             CustomLogger logger
     ){
         return new UpdateLoanApplicationUseCase(
@@ -224,7 +231,52 @@ public class UseCasesConfig {
                 updateLoanUseCase,
                 getClientAndLoanTypeUseCase,
                 buildLoanWithClientUseCase,
-                loanApplicationSQSGateway,
+                publishDecisionSQSGateway,
                 logger);
+    }
+
+    // CalculateCapacityUseCase
+
+    @Bean
+    DecisionPublisherUseCase decisionPublisherUseCase(
+            CalculateCapacitySQSGateway calculateCapacitySQSGateway,
+            CustomLogger logger
+    ){
+        return new DecisionPublisherUseCase(calculateCapacitySQSGateway, logger);
+    }
+
+    @Bean
+    GetClientUseCase getClientUseCase(
+            LoanApplicationRepository loanApplicationRepository,
+            ClientSnapshotRepository clientSnapshotRepository,
+            CustomLogger logger
+    ){
+        return new GetClientUseCase(loanApplicationRepository, clientSnapshotRepository, logger);
+    }
+
+    @Bean
+    LoanTypeValidatorUseCase loanTypeValidatorUseCase(
+            CustomLogger logger
+    ){
+        return new LoanTypeValidatorUseCase(logger);
+    }
+
+    @Bean
+    CalculateCapacityUseCase calculateCapacityUseCase(
+            LoanApplicationRepository loanApplicationRepository,
+            LoanTypeRepository loanTypeRepository,
+            GetClientUseCase getClientUseCase,
+            DecisionPublisherUseCase decisionPublisherUseCase,
+            LoanTypeValidatorUseCase loanTypeValidatorUseCase,
+            CustomLogger logger
+    ){
+        return new CalculateCapacityUseCase(
+                loanApplicationRepository,
+                loanTypeRepository,
+                getClientUseCase,
+                decisionPublisherUseCase,
+                loanTypeValidatorUseCase,
+                logger
+        );
     }
 }

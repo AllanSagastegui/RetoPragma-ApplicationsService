@@ -49,7 +49,8 @@ adapter:
   sqs:
     region: "${AWS_REGION}"
     queueUrl: "${AWS_QUEUE_URL}"
-    endpoint: "http://localhost:4566"
+    queueCalculateCapacity: "${AWS_QUEUE_CALCULATE_URL}"
+    queueResponseCalculateCapacity: "${AWS_QUEUE_CALCULATE_RESPONSE_URL}"
 resilience4j:
   circuitbreaker:
     instances:

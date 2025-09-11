@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .pathMatchers(
                                 HttpMethod.PUT,
                                 Routes.UPDATE_LOAN_APPLICATION
-                        ).hasAnyRole("ADVISOR", "ADMIN")
+                        ).hasAnyRole("ADVISOR", "ADMIN", "CLIENT")
                         .anyExchange()
                         .authenticated())
                 .exceptionHandling(ex -> ex

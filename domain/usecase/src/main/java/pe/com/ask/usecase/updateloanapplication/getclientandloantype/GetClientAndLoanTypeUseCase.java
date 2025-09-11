@@ -29,7 +29,10 @@ public class GetClientAndLoanTypeUseCase {
                         logger.trace(UpdateLoanApplicationUseCaseLog.CLIENT_FOUND,
                                 loanApplication.getUserId(), client.getDni())
                 )
-                .switchIfEmpty(Mono.error(new ClientNotFoundException()))
+                .switchIfEmpty(Mono.defer(() -> {
+                    logger.trace("Client not found for userId {}", loanApplication.getUserId());
+                    return Mono.error(new ClientNotFoundException());
+                }))
                 .flatMap(clientSnapshot ->
                         loanTypeRepository.findLoanTypeById(loanApplication.getIdLoanType())
                                 .doOnNext(loanType ->

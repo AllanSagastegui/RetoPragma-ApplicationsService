@@ -27,4 +27,12 @@ public interface LoanApplicationReactiveRepository extends ReactiveCrudRepositor
     """)
     Mono<Long> countByIdStatusIn(List<UUID> statusIds);
 
+    @Query("""
+        SELECT la.*
+        FROM loan_application la
+        JOIN status s ON la.id_status = s.id_status
+        WHERE la.id_user = :userId
+        AND s.name = 'Aprobada'
+    """)
+    Flux<LoanApplicationEntity> findAllApprovedLoansApplicationsByUserId(UUID userId);
 }

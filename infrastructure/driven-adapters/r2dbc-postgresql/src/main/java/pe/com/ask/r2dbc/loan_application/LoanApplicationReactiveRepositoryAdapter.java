@@ -40,7 +40,6 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
 
     @Override
     public Flux<LoanApplication> findLoansByIdStatus(List<UUID> statusIds, int offset, int limit) {
-
         return repository.findAllByIdStatusIn(statusIds, offset, limit)
                 .map(entity -> mapper.map(entity, LoanApplication.class));
     }
@@ -53,5 +52,11 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     @Override
     public Mono<LoanApplication> findLoanApplicationById(UUID id) {
         return super.findById(id);
+    }
+
+    @Override
+    public Flux<LoanApplication> findAllApprovedLoansApplicationsByUserId(UUID userId) {
+        return repository.findAllApprovedLoansApplicationsByUserId(userId)
+                .map(entity -> mapper.map(entity, LoanApplication.class));
     }
 }

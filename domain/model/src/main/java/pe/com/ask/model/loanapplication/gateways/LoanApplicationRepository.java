@@ -13,4 +13,5 @@ public interface LoanApplicationRepository {
     Flux<LoanApplication> findLoansByIdStatus(List<UUID> statusIds, int offset, int limit);
     Mono<Long> countLoansByIdStatus(List<UUID> statusIds);
     Mono<LoanApplication> findLoanApplicationById(UUID id);
+    Flux<LoanApplication> findAllApprovedLoansApplicationsByUserId(UUID userId);
 }
