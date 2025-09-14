@@ -37,8 +37,8 @@ routes:
   path: null
 adapters:
   r2dbc:
-    host: "postgres-db"
-    port: 5432
+    host: "${DB_HOST}"
+    port: "${DB_PORT}"
     database: "${DB_NAME}"
     username: "${DB_USER}"
     password: "${DB_PASSWORD}"
@@ -51,6 +51,7 @@ adapter:
     queueUrl: "${AWS_QUEUE_URL}"
     queueCalculateCapacity: "${AWS_QUEUE_CALCULATE_URL}"
     queueResponseCalculateCapacity: "${AWS_QUEUE_CALCULATE_RESPONSE_URL}"
+    queueUpdateReports: "${AWS_QUEUE_REPORTS}"
 resilience4j:
   circuitbreaker:
     instances:

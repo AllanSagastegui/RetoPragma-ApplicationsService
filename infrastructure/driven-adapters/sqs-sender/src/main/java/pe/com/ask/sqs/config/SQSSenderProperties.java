@@ -8,5 +8,6 @@ public record SQSSenderProperties(
      String queueUrl,
      String queueCalculateCapacity,
      String queueResponseCalculateCapacity,
+     String queueUpdateReports,
      String endpoint
 ){ }

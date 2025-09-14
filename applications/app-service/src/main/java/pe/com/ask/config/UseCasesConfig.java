@@ -9,6 +9,7 @@ import pe.com.ask.model.gateways.TransactionalGateway;
 import pe.com.ask.model.loanapplication.gateways.CalculateCapacitySQSGateway;
 import pe.com.ask.model.loanapplication.gateways.LoanApplicationRepository;
 import pe.com.ask.model.loanapplication.gateways.PublishDecisionSQSGateway;
+import pe.com.ask.model.loanapplication.gateways.UpdateReportsSQSGateway;
 import pe.com.ask.model.loantype.gateways.LoanTypeRepository;
 import pe.com.ask.model.loanwithclient.gateways.ClientSnapshotRepository;
 import pe.com.ask.model.loanwithclient.gateways.UserIdentityGateway;
@@ -224,6 +225,7 @@ public class UseCasesConfig {
             GetClientAndLoanTypeUseCase getClientAndLoanTypeUseCase,
             BuildLoanWithClientUseCase buildLoanWithClientUseCase,
             PublishDecisionSQSGateway publishDecisionSQSGateway,
+            UpdateReportsSQSGateway updateReportsSQSGateway,
             CustomLogger logger
     ){
         return new UpdateLoanApplicationUseCase(
@@ -232,6 +234,7 @@ public class UseCasesConfig {
                 getClientAndLoanTypeUseCase,
                 buildLoanWithClientUseCase,
                 publishDecisionSQSGateway,
+                updateReportsSQSGateway,
                 logger);
     }
 

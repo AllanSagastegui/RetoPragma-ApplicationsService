@@ -68,14 +68,14 @@ public enum ErrorCatalog {
             )
     ),
     UNAUTHORIZED(
-            "AUTH_UNAUTHORIZED",
+            "APPLICATIONS_UNAUTHORIZED",
             "Unauthorized",
             "You are not authenticated. Please log in to access this resource.",
             401,
             Map.of("user", "Authentication required")
     ),
     ACCESS_DENIED(
-            "AUTH_ACCESS_DENIED",
+            "APPLICATIONS_ACCESS_DENIED",
             "Access Denied",
             "You do not have permission to access this resource.",
             403,

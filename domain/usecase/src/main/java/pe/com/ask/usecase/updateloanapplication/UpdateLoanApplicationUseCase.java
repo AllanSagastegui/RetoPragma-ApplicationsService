@@ -3,6 +3,7 @@ package pe.com.ask.usecase.updateloanapplication;
 import lombok.RequiredArgsConstructor;
 import pe.com.ask.model.gateways.CustomLogger;
 import pe.com.ask.model.loanapplication.gateways.PublishDecisionSQSGateway;
+import pe.com.ask.model.loanapplication.gateways.UpdateReportsSQSGateway;
 import pe.com.ask.model.loanwithclient.LoanWithClient;
 import pe.com.ask.usecase.updateloanapplication.buildloanwithclient.BuildLoanWithClientUseCase;
 import pe.com.ask.usecase.updateloanapplication.getclientandloantype.GetClientAndLoanTypeUseCase;
@@ -21,6 +22,7 @@ public class UpdateLoanApplicationUseCase {
     private final GetClientAndLoanTypeUseCase getClientAndLoanTypeUseCase;
     private final BuildLoanWithClientUseCase  buildLoanWithClientUseCase;
     private final PublishDecisionSQSGateway publishDecisionSQSGateway;
+    private final UpdateReportsSQSGateway updateReportsSQSGateway;
     private final CustomLogger logger;
 
     public Mono<LoanWithClient> execute(UUID idLoanApplication, String status) {
@@ -43,7 +45,10 @@ public class UpdateLoanApplicationUseCase {
 
                                                     return publishDecisionSQSGateway.publishDecision(
                                                             loanWithClient
-                                                    ).thenReturn(loanWithClient);
+                                                            )
+                                                            .then(updateReportsSQSGateway.updateReports(status, updatedLoanApplication.getAmount()))
+                                                            .thenReturn(loanWithClient);
+
                                                 })
                                 )
                 )
