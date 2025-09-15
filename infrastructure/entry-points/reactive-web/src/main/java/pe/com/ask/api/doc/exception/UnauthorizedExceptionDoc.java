@@ -2,13 +2,11 @@ package pe.com.ask.api.doc.exception;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @Getter
-@Setter
 @Schema(
         name = "UnauthorizedException",
         description = "Represents an unauthorized error when the user is not authenticated"

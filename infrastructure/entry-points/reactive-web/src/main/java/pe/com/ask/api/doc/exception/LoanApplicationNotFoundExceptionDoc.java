@@ -7,25 +7,25 @@ import java.time.LocalDateTime;
 
 @Getter
 @Schema(
-        name = "LoanTypeNotFoundException",
-        description = "Error response returned for unexpected or unhandled server errors."
+        name = "LoanApplicationNotFoundException",
+        description = "Error response returned when a loan application could not be found."
 )
-public class LoanTypeNotFoundExceptionDoc {
+public class LoanApplicationNotFoundExceptionDoc {
     @Schema(
             description = "Unique error code for this type of exception.",
-            example = "APPLICATIONS_LOAN_TYPE_NOT_FOUND"
+            example = "APPLICATIONS_LOAN_APPLICATION_NOT_FOUND"
     )
     private String errorCode;
 
     @Schema(
             description = "Short descriptive title of the error.",
-            example = "Loan Type Not Found"
+            example = "Loan Application Not Found"
     )
     private String title;
 
     @Schema(
             description = "Detailed error message explaining the reason for the failure.",
-            example = "The selected loan type does not exist. Please choose a valid type."
+            example = "The requested loan application could not be found. Please check the ID and try again."
     )
     private String message;
 
@@ -43,7 +43,7 @@ public class LoanTypeNotFoundExceptionDoc {
 
     @Schema(
             description = "Additional information related to the error (if applicable).",
-            example = "Not Applicable"
+            example = "{ \"loanApplication\": \"The loan application ID you provided does not exist in the system.\" }"
     )
     private Object errors;
 }

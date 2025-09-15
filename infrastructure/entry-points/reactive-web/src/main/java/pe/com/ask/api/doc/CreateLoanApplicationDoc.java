@@ -16,13 +16,22 @@ import pe.com.ask.api.dto.response.ResponseCreateLoanApplication;
 import reactor.core.publisher.Mono;
 
 @Component
-@Schema
+@Schema(
+        name = "CreateLoanApplicationDoc",
+        description = "API documentation for creating a new loan application. " +
+                "This endpoint registers a loan application using applicant details and the selected loan type. " +
+                "It validates the input data, ensures the loan type exists, and enforces business rules such as " +
+                "validating that the loan amount is within the allowed range. " +
+                "Authentication via Bearer token is required."
+)
 public class CreateLoanApplicationDoc {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
         summary = "Create a new Loan Application",
-            description = "Registers a new loan application based on the provided applicant information and selected loan type.",
+            description = "Registers a new loan application based on the provided applicant information and selected loan type. " +
+                    "Performs validation on the input data and ensures the selected loan type is valid. " +
+                    "Requires Bearer token authentication.",
             security = {@SecurityRequirement(name = "bearerAuth")}
     )
     @ApiResponses(value = {
@@ -69,7 +78,7 @@ public class CreateLoanApplicationDoc {
             )
     })
     public Mono<ResponseCreateLoanApplication> createLoanApplicationDoc(
-            @RequestBody(description = "Loan Application - Data required to create a new loan application")
+            @RequestBody(description = "Data required to create a new loan application")
             @org.springframework.web.bind.annotation.RequestBody CreateLoanApplicationDTO dto) {
         return Mono.empty();
     }

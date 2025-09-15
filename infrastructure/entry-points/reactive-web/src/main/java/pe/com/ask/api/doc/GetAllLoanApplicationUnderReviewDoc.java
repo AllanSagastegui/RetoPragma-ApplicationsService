@@ -18,13 +18,20 @@ import pe.com.ask.model.loanwithclient.Pageable;
 import reactor.core.publisher.Mono;
 
 @Component
-@Schema(description = "Documentation for fetching all Loan Applications under review")
+@Schema(
+        name = "GetAllLoanApplicationUnderReviewDoc",
+        description = "API documentation for retrieving all loan applications currently under review. " +
+                "This endpoint provides a paginated list of loan applications that are in the review process. " +
+                "Clients can customize the request using pagination parameters (`page`, `size`) and an optional " +
+                "filter by loan status. Authentication via Bearer token is required."
+)
 public class GetAllLoanApplicationUnderReviewDoc {
 
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get all loan applications under review",
-            description = "Fetches a paginated list of loan applications under review. Requires Bearer token authentication.",
+            description = "Fetches a paginated list of loan applications that are currently under review. " +
+                    "Supports pagination and optional filtering by loan status. Requires Bearer token authentication.",
             security = {@SecurityRequirement(name = "bearerAuth")}
     )
     @ApiResponses(value = {
